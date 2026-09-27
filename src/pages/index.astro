@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { allPosts } from "../lib/content";
+const latest = allPosts.slice(0, 9);
+---
+<BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings.">
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">এপিটাফ · Epitaph</p>
+      <h1>Writings that stay with you.</h1>
+      <p>A quieter, cleaner home for the writings of Prankrishna Borgohain. New posts continue to arrive from Blogger.</p>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="section-heading">
+      <h2>Latest writings</h2>
+      <a class="read-more" href={import.meta.env.BASE_URL + "archive/"}>View archive →</a>
+    </div>
+    <div class="post-grid">
+      {latest.map((post) => (
+        <article class="post-card">
+          <p class="meta">{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
+          <h3>{post.title}</h3>
+          <p>{post.excerpt}</p>
+          <div class="tags">{post.labels.slice(0, 3).map((tag) => <a class="tag" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(tag)}>{tag}</a>)}</div>
+          <a class="read-more" href={import.meta.env.BASE_URL + "post/" + post.id + "/"}>Read →</a>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
