@@ -1,32 +1,44 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { allPosts } from "../lib/content";
+import { allPosts, getPostPath } from "../lib/content";
 const latest = allPosts.slice(0, 9);
+const labels = [...new Set(allPosts.flatMap((post) => post.labels))].slice(0, 12);
 ---
-<BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings.">
+<BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings. Essays, notes and reflections.">
   <section class="hero">
     <div class="container">
       <p class="eyebrow">এপিটাফ · Epitaph</p>
       <h1>Writings that stay with you.</h1>
-      <p>A quieter, cleaner home for the writings of Prankrishna Borgohain. New posts continue to arrive from Blogger.</p>
+      <p>A quieter, cleaner home for the writings of Prankrishna Borgohain — synced automatically from Blogger.</p>
+      <div class="hero-actions">
+        <a class="button" href={import.meta.env.BASE_URL + "archive/"}>Explore the archive</a>
+        <a class="button secondary" href={import.meta.env.BASE_URL + "rss.xml"}>Subscribe via RSS</a>
+      </div>
     </div>
   </section>
 
-  <section class="container">
+  <section class="container section">
     <div class="section-heading">
-      <h2>Latest writings</h2>
+      <div><p class="eyebrow">Recent</p><h2>Latest writings</h2></div>
       <a class="read-more" href={import.meta.env.BASE_URL + "archive/"}>View archive →</a>
     </div>
     <div class="post-grid">
       {latest.map((post) => (
         <article class="post-card">
-          <p class="meta">{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
-          <h3>{post.title}</h3>
+          <p class="meta"><time datetime={post.published}>{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</time></p>
+          <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
           <p>{post.excerpt}</p>
-          <div class="tags">{post.labels.slice(0, 3).map((tag) => <a class="tag" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(tag)}>{tag}</a>)}</div>
-          <a class="read-more" href={import.meta.env.BASE_URL + "post/" + post.id + "/"}>Read →</a>
+          <div class="tags">
+            {post.labels.slice(0, 3).map((tag) => <a class="tag" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(tag)}>{tag}</a>)}
+          </div>
+          <a class="read-more" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read →</a>
         </article>
       ))}
     </div>
   </section>
+
+  {labels.length > 0 && <section class="container section topic-strip">
+    <div class="section-heading"><div><p class="eyebrow">Browse</p><h2>Topics</h2></div></div>
+    <div class="tag-cloud">{labels.map((tag) => <a class="tag" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(tag)}>{tag}</a>)}</div>
+  </section>}
 </BaseLayout>
