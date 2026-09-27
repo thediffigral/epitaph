@@ -1,19 +1,24 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { allPosts, getPostPath } from "../lib/content";
-const labels = [...new Set(allPosts.flatMap((post) => post.labels))].sort((a,b) => a.localeCompare(b));
+const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Boolean).sort((a,b) => a.localeCompare(b));
 ---
+
 <BaseLayout title="Archive — Epitaph" description="Browse the complete archive of writings by Prankrishna Borgohain.">
-  <section class="page">
+  <section class="page archive-page">
     <div class="container">
-      <p class="eyebrow">Archive</p>
-      <h1 class="article-title">All writings</h1>
-      <p class="lede">{allPosts.length} writings · searchable by title, text and topic.</p>
+      <div class="archive-header">
+        <div>
+          <p class="eyebrow">Archive</p>
+          <h1 class="article-title">All writings</h1>
+          <p class="lede">{allPosts.length} writings, collected in one place.</p>
+        </div>
+      </div>
 
       <div class="archive-tools">
         <label class="search-box">
-          <span>Search</span>
-          <input id="post-search" type="search" placeholder="Search writings…" autocomplete="off" />
+          <span>Search writings</span>
+          <input id="post-search" type="search" placeholder="Search by title or text…" autocomplete="off" />
         </label>
         <label class="filter-box">
           <span>Topic</span>
@@ -26,44 +31,62 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].sort((a,b) 
 
       <p id="search-status" class="search-status" aria-live="polite"></p>
 
-      <div class="post-grid" id="archive-grid">
+      <div class="archive-grid" id="archive-grid">
         {allPosts.map((post) => (
-          <article class="post-card archive-card" data-search={(post.title + " " + post.excerpt + " " + post.labels.join(" ")).toLowerCase()} data-tags={post.labels.join("|")}>
-            <p class="meta"><time datetime={post.published}>{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</time></p>
-            <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
+          <article class="archive-card" data-search={(post.title + " " + post.excerpt + " " + post.labels.join(" ")).toLowerCase()} data-tags={post.labels.join("|")}>
+            <div class="archive-card-top">
+              <p class="meta"><time datetime={post.published}>{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</time></p>
+              {post.labels[0] && <span class="archive-label">{post.labels[0]}</span>}
+            </div>
+            <h2><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h2>
             <p>{post.excerpt}</p>
-            <div class="tags">{post.labels.slice(0, 4).map((tag) => <a class="tag" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(tag)}>{tag}</a>)}</div>
-            <a class="read-more" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read →</a>
+            <div class="archive-card-footer">
+              <div class="tags">{post.labels.slice(0, 3).map((tag) => <span class="tag">{tag}</span>)}</div>
+              <a class="read-more" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read →</a>
+            </div>
           </article>
         ))}
       </div>
+
+      <p id="no-results" class="no-results" hidden>No writings match your search.</p>
     </div>
   </section>
+
   <script>
     const search = document.querySelector("#post-search") as HTMLInputElement | null;
     const filter = document.querySelector("#tag-filter") as HTMLSelectElement | null;
-    const cards = [...document.querySelectorAll<HTMLElement>(".archive-card")];
+    const cards = Array.from(document.querySelectorAll<HTMLElement>(".archive-card"));
     const status = document.querySelector("#search-status") as HTMLElement | null;
+    const empty = document.querySelector("#no-results") as HTMLElement | null;
     const params = new URLSearchParams(window.location.search);
     const initialTag = params.get("tag") || "";
-    if (initialTag && filter) filter.value = initialTag;
+
+    if (initialTag && filter && Array.from(filter.options).some((option) => option.value === initialTag)) {
+      filter.value = initialTag;
+    }
 
     const apply = () => {
-      const q = (search?.value || "").trim().toLowerCase();
+      const query = (search?.value || "").trim().toLowerCase();
       const tag = filter?.value || "";
       let visible = 0;
-      for (const card of cards) {
-        const matchesQuery = !q || (card.dataset.search || "").includes(q);
+
+      cards.forEach((card) => {
+        const matchesQuery = !query || (card.dataset.search || "").includes(query);
         const matchesTag = !tag || (card.dataset.tags || "").split("|").includes(tag);
         const show = matchesQuery && matchesTag;
         card.hidden = !show;
         if (show) visible++;
-      }
+      });
+
       if (status) status.textContent = visible + " " + (visible === 1 ? "writing" : "writings") + " shown";
+      if (empty) empty.hidden = visible !== 0;
+
       const next = new URL(window.location.href);
-      if (tag) next.searchParams.set("tag", tag); else next.searchParams.delete("tag");
+      if (tag) next.searchParams.set("tag", tag);
+      else next.searchParams.delete("tag");
       if (history.replaceState) history.replaceState(null, "", next);
     };
+
     search?.addEventListener("input", apply);
     filter?.addEventListener("change", apply);
     apply();
