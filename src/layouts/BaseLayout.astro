@@ -9,7 +9,7 @@ const {
 } = Astro.props;
 
 const siteUrl = Astro.site ?? new URL("https://thediffigral.github.io/epitaph");
-const canonicalUrl = canonical ? new URL(canonical, siteUrl).href : Astro.url.href;
+const canonicalUrl = canonical ? new URL(canonical.replace(/^\/+/, ""), siteUrl.href.endsWith("/") ? siteUrl.href : siteUrl.href + "/").href : Astro.url.href;
 const imageUrl = new URL(image, siteUrl).href;
 ---
 <!doctype html>
