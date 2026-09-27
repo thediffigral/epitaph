@@ -53,7 +53,7 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].sort((a,b) 
       const tag = filter?.value || "";
       let visible = 0;
       for (const card of cards) {
-        const matchesQuery = !q || card.dataset.search.includes(q);
+        const matchesQuery = !q || (card.dataset.search || "").includes(q);
         const matchesTag = !tag || (card.dataset.tags || "").split("|").includes(tag);
         const show = matchesQuery && matchesTag;
         card.hidden = !show;
