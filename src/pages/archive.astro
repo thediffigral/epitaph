@@ -40,10 +40,10 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].sort((a,b) 
     </div>
   </section>
   <script>
-    const search = document.querySelector("#post-search");
-    const filter = document.querySelector("#tag-filter");
-    const cards = [...document.querySelectorAll(".archive-card")];
-    const status = document.querySelector("#search-status");
+    const search = document.querySelector("#post-search") as HTMLInputElement | null;
+    const filter = document.querySelector("#tag-filter") as HTMLSelectElement | null;
+    const cards = [...document.querySelectorAll<HTMLElement>(".archive-card")];
+    const status = document.querySelector("#search-status") as HTMLElement | null;
     const params = new URLSearchParams(window.location.search);
     const initialTag = params.get("tag") || "";
     if (initialTag && filter) filter.value = initialTag;
