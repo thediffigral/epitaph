@@ -33,7 +33,7 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Bool
 
       <div class="archive-grid" id="archive-grid">
         {allPosts.map((post) => (
-          <article class="archive-card" data-search={(post.title + " " + post.excerpt + " " + post.labels.join(" ")).toLowerCase()} data-tags={post.labels.join("|")}>
+          <article class="archive-card" data-search={(post.title + " " + post.excerpt + " " + post.labels.join(" ")).toLowerCase()} data-tags={post.labels.map((label) => label.trim().toLocaleLowerCase()).join("|")}>
             <div class="archive-card-top">
               <p class="meta"><time datetime={post.published}>{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</time></p>
               {post.labels[0] && <span class="archive-label">{post.labels[0]}</span>}
@@ -61,13 +61,14 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Bool
     const params = new URLSearchParams(window.location.search);
     const initialTag = params.get("tag") || "";
 
-    if (initialTag && filter && Array.from(filter.options).some((option) => option.value === initialTag)) {
-      filter.value = initialTag;
+    if (initialTag && filter) {
+      const matchingOption = Array.from(filter.options).find((option) => option.value.trim().toLocaleLowerCase() === initialTag.trim().toLocaleLowerCase());
+      if (matchingOption) filter.value = matchingOption.value;
     }
 
     const apply = () => {
       const query = (search?.value || "").trim().toLowerCase();
-      const tag = filter?.value || "";
+      const tag = (filter?.value || "").trim().toLocaleLowerCase();
       let visible = 0;
 
       cards.forEach((card) => {
@@ -87,8 +88,8 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Bool
       if (history.replaceState) history.replaceState(null, "", next);
     };
 
-    search?.addEventListener("input", apply);
-    filter?.addEventListener("change", apply);
+    if (search) search.addEventListener("input", apply);
+    if (filter) filter.addEventListener("change", apply);
     apply();
   </script>
 </BaseLayout>
