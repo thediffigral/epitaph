@@ -24,11 +24,13 @@ export const getRelated = (current: Post) =>
     .filter((post) => post.id !== current.id && post.labels.some((x) => current.labels.includes(x)))
     .slice(0, 3);
 
-export const getPostPath = (post: Post) => {
+export const getPostPath = (post: Post) => "post/" + encodeURIComponent(post.id);
+
+export const getBloggerPath = (post: Post) => {
   if (post.path) return post.path.replace(/^\/+/, "").replace(/\/$/, "");
   try {
     return new URL(post.url).pathname.replace(/^\/+/, "").replace(/\/$/, "");
   } catch {
-    return "post/" + post.id;
+    return "";
   }
 };
