@@ -1,44 +1,128 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { allPosts, getPostPath } from "../lib/content";
-const latest = allPosts.slice(0, 9);
-const labels = [...new Set(allPosts.flatMap((post) => post.labels))].slice(0, 12);
+
+const latest = allPosts[0];
+const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Boolean).slice(0, 12);
+const initialLabel = labels[0] ?? "";
+const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.includes(label)).slice(0, 3);
 ---
+
 <BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings. Essays, notes and reflections.">
-  <section class="hero">
-    <div class="container">
-      <p class="eyebrow">এপিটাফ · Epitaph</p>
-      <h1>Writings that stay with you.</h1>
-      <p>A quieter, cleaner home for the writings of Prankrishna Borgohain — synced automatically from Blogger.</p>
-      <div class="hero-actions">
-        <a class="button" href={import.meta.env.BASE_URL + "archive/"}>Explore the archive</a>
-        <a class="button secondary" href={import.meta.env.BASE_URL + "rss.xml"}>Subscribe via RSS</a>
-      </div>
-    </div>
-  </section>
+  <main>
+    {latest && (
+      <section class="feature container">
+        <div class="feature-copy">
+          <p class="eyebrow">Featured · Latest</p>
+          <p class="feature-date">
+            <time datetime={latest.published}>
+              {new Date(latest.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+            </time>
+          </p>
+          <h1>{latest.title}</h1>
+          <p class="feature-excerpt">{latest.excerpt}</p>
+          {latest.labels.length > 0 && (
+            <div class="feature-labels">
+              {latest.labels.slice(0, 3).map((label) => (
+                <span>{label}</span>
+              ))}
+            </div>
+          )}
+          <a class="feature-link" href={import.meta.env.BASE_URL + getPostPath(latest) + "/"}>Read the latest article <span>→</span></a>
+        </div>
+        <div class="feature-rule" aria-hidden="true"></div>
+      </section>
+    )}
 
-  <section class="container section">
-    <div class="section-heading">
-      <div><p class="eyebrow">Recent</p><h2>Latest writings</h2></div>
-      <a class="read-more" href={import.meta.env.BASE_URL + "archive/"}>View archive →</a>
-    </div>
-    <div class="post-grid">
-      {latest.map((post) => (
-        <article class="post-card">
-          <p class="meta"><time datetime={post.published}>{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</time></p>
-          <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
-          <p>{post.excerpt}</p>
-          <div class="tags">
-            {post.labels.slice(0, 3).map((tag) => <a class="tag" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(tag)}>{tag}</a>)}
+    {labels.length > 0 && (
+      <section class="container browse-section" aria-labelledby="browse-title">
+        <div class="browse-heading">
+          <div>
+            <p class="eyebrow">The writings</p>
+            <h2 id="browse-title">Explore by label</h2>
           </div>
-          <a class="read-more" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read →</a>
-        </article>
-      ))}
-    </div>
-  </section>
+          <a class="archive-link" href={import.meta.env.BASE_URL + "archive/"}>View all writings →</a>
+        </div>
 
-  {labels.length > 0 && <section class="container section topic-strip">
-    <div class="section-heading"><div><p class="eyebrow">Browse</p><h2>Topics</h2></div></div>
-    <div class="tag-cloud">{labels.map((tag) => <a class="tag" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(tag)}>{tag}</a>)}</div>
-  </section>}
+        <div class="label-tabs" role="tablist" aria-label="Writing labels">
+          {labels.map((label, index) => (
+            <button
+              type="button"
+              class:list={["label-tab", { active: index === 0 }]}
+              role="tab"
+              aria-selected={index === 0}
+              aria-controls={"label-panel-" + index}
+              data-label-tab={label}
+              data-label-index={index}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div class="label-panels">
+          {labels.map((label, index) => (
+            <div
+              id={"label-panel-" + index}
+              class:list={["label-panel", { active: index === 0 }]}
+              role="tabpanel"
+              aria-label={label}
+              data-label-panel={label}
+              hidden={index !== 0}
+            >
+              <div class="story-list">
+                {postsByLabel(label).map((post, postIndex) => (
+                  <article class="story-row">
+                    <span class="story-number">{String(postIndex + 1).padStart(2, "0")}</span>
+                    <div class="story-main">
+                      <p class="story-meta">
+                        <time datetime={post.published}>
+                          {new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
+                        </time>
+                      </p>
+                      <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
+                      <p>{post.excerpt}</p>
+                    </div>
+                    <a class="story-arrow" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>↗</a>
+                  </article>
+                ))}
+              </div>
+              <a class="more-label" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(label)}>
+                More from {label} <span>→</span>
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="container author-note">
+      <div>
+        <p class="eyebrow">এপিটাফ · Epitaph</p>
+        <h2>A home for words, ideas and things worth remembering.</h2>
+      </div>
+      <p>Writings by Prankrishna Borgohain, published from Blogger and gathered here in a quieter reading space.</p>
+    </section>
+  </main>
+
+  <script>
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-label-tab]"));
+    const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-label-panel]"));
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const label = tab.dataset.labelTab;
+        tabs.forEach((item) => {
+          const selected = item === tab;
+          item.classList.toggle("active", selected);
+          item.setAttribute("aria-selected", String(selected));
+        });
+        panels.forEach((panel) => {
+          const active = panel.dataset.labelPanel === label;
+          panel.classList.toggle("active", active);
+          panel.hidden = !active;
+        });
+      });
+    });
+  </script>
 </BaseLayout>
