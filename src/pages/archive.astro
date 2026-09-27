@@ -62,7 +62,8 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Bool
     const initialTag = params.get("tag") || "";
 
     if (initialTag && filter) {
-      const normalizedInitialTag = initialTag.trim().normalize("NFC").toLocaleLowerCase();\n      const matchingOption = Array.from(filter.options).find((option) => option.value.trim().normalize("NFC").toLocaleLowerCase() === normalizedInitialTag);
+      const normalizedInitialTag = initialTag.trim().normalize("NFC").toLocaleLowerCase();
+      const matchingOption = Array.from(filter.options).find((option) => option.value.trim().normalize("NFC").toLocaleLowerCase() === normalizedInitialTag);
       if (matchingOption) filter.value = matchingOption.value;
     }
 
@@ -73,7 +74,8 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Bool
 
       cards.forEach((card) => {
         const matchesQuery = !query || (card.dataset.search || "").includes(query);
-        const tags = JSON.parse(card.dataset.tags || "[]") as string[];\n        const matchesTag = !tag || tags.some((item) => item.normalize("NFC").trim().toLocaleLowerCase() === tag);
+        const tags = JSON.parse(card.dataset.tags || "[]") as string[];
+        const matchesTag = !tag || tags.some((item) => item.normalize("NFC").trim().toLocaleLowerCase() === tag);
         const show = matchesQuery && matchesTag;
         card.hidden = !show;
         if (show) visible++;
