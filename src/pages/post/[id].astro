@@ -18,6 +18,7 @@ const canonical = getPostPath(post);
 ---
 <BaseLayout title={post.title + " — Epitaph"} description={post.excerpt} canonical={canonical}>
   <article class="page article-wrap">
+    <div class="article-mark" aria-hidden="true"><img src={import.meta.env.BASE_URL + "epitaph-mark.svg"} alt="" width="88" height="88" /></div>
     <p class="eyebrow">Epitaph</p>
     <h1 class="article-title">{post.title}</h1>
     <p class="meta"><time datetime={post.published}>{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</time> · {post.author}</p>
