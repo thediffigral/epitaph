@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { allPosts, getPost } from "../../lib/content";
+import { allPosts, getPostPath } from "../../lib/content";
+
 export function getStaticPaths() {
   return allPosts.map((post, index) => ({
     params: { id: post.id },
@@ -11,18 +12,21 @@ export function getStaticPaths() {
     }
   }));
 }
+
 const { post, previous, next } = Astro.props;
+const canonical = getPostPath(post);
 ---
-<BaseLayout title={post.title} description={post.excerpt}>
+<BaseLayout title={post.title + " — Epitaph"} description={post.excerpt} canonical={canonical}>
   <article class="page article-wrap">
     <p class="eyebrow">Epitaph</p>
     <h1 class="article-title">{post.title}</h1>
-    <p class="meta">{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })} · {post.author}</p>
-    <div class="tags">{post.labels.map((tag) => <span class="tag">{tag}</span>)}</div>
+    <p class="meta"><time datetime={post.published}>{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</time> · {post.author}</p>
+    {post.updated !== post.published && <p class="updated-note">Updated {new Date(post.updated).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>}
+    <div class="tags">{post.labels.map((tag) => <a class="tag" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(tag)}>{tag}</a>)}</div>
     <div class="article-content" set:html={post.content}></div>
     <nav class="article-nav" aria-label="Article navigation">
-      {previous ? <a href={import.meta.env.BASE_URL + "post/" + previous.id + "/"}>← {previous.title}</a> : <span />}
-      {next ? <a href={import.meta.env.BASE_URL + "post/" + next.id + "/"}>{next.title} →</a> : <span />}
+      {previous ? <a href={import.meta.env.BASE_URL + getPostPath(previous) + "/"}>← {previous.title}</a> : <span />}
+      {next ? <a href={import.meta.env.BASE_URL + getPostPath(next) + "/"}>{next.title} →</a> : <span />}
     </nav>
   </article>
 </BaseLayout>
