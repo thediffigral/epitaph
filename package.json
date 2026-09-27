@@ -1,6 +1,6 @@
 {
   "name": "epitaph",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,6 +11,7 @@
     "sync": "node scripts/sync-blogger.mjs"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "astro": "^5.14.0"
   },
   "devDependencies": {
