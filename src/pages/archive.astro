@@ -33,7 +33,7 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Bool
 
       <div class="archive-grid" id="archive-grid">
         {allPosts.map((post) => (
-          <article class="archive-card" data-search={(post.title + " " + post.excerpt + " " + post.labels.join(" ")).toLowerCase()} data-tags={post.labels.map((label) => label.trim().toLocaleLowerCase()).join("|")}>
+          <article class="archive-card" data-search={(post.title + " " + post.excerpt + " " + post.labels.join(" ")).toLowerCase()} data-tags={JSON.stringify(post.labels.map((label) => label.trim().toLocaleLowerCase()))}>
             <div class="archive-card-top">
               <p class="meta"><time datetime={post.published}>{new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</time></p>
               {post.labels[0] && <span class="archive-label">{post.labels[0]}</span>}
@@ -62,18 +62,18 @@ const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Bool
     const initialTag = params.get("tag") || "";
 
     if (initialTag && filter) {
-      const matchingOption = Array.from(filter.options).find((option) => option.value.trim().toLocaleLowerCase() === initialTag.trim().toLocaleLowerCase());
+      const normalizedInitialTag = initialTag.trim().normalize("NFC").toLocaleLowerCase();\n      const matchingOption = Array.from(filter.options).find((option) => option.value.trim().normalize("NFC").toLocaleLowerCase() === normalizedInitialTag);
       if (matchingOption) filter.value = matchingOption.value;
     }
 
     const apply = () => {
       const query = (search?.value || "").trim().toLowerCase();
-      const tag = (filter?.value || "").trim().toLocaleLowerCase();
+      const tag = (filter?.value || "").trim().normalize("NFC").toLocaleLowerCase();
       let visible = 0;
 
       cards.forEach((card) => {
         const matchesQuery = !query || (card.dataset.search || "").includes(query);
-        const matchesTag = !tag || (card.dataset.tags || "").split("|").includes(tag);
+        const tags = JSON.parse(card.dataset.tags || "[]") as string[];\n        const matchesTag = !tag || tags.some((item) => item.normalize("NFC").trim().toLocaleLowerCase() === tag);
         const show = matchesQuery && matchesTag;
         card.hidden = !show;
         if (show) visible++;
