@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Page not found — Epitaph" description="The requested page could not be found.">
+  <section class="page">
+    <div class="container narrow">
+      <p class="eyebrow">404</p>
+      <h1 class="article-title">That page has gone quiet.</h1>
+      <p class="lede">The writing you’re looking for may have moved, or the address may be incorrect.</p>
+      <div class="hero-actions">
+        <a class="button" href={import.meta.env.BASE_URL}>Go home</a>
+        <a class="button secondary" href={import.meta.env.BASE_URL + "archive/"}>Browse archive</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
