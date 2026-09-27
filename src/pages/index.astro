@@ -12,6 +12,9 @@ const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.in
   <main>
     {latest && (
       <section class="feature container">
+        <div class="feature-art" aria-hidden="true">
+          <img src={import.meta.env.BASE_URL + "epitaph-mark.svg"} alt="" width="220" height="220" />
+        </div>
         <div class="feature-copy">
           <p class="eyebrow">Featured · Latest</p>
           <p class="feature-date">
