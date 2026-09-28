@@ -16,8 +16,8 @@ export type Post = {
 const englishLabel = (label: string) =>
   label
     .replace(/[\u0980-\u09FF]+/g, " ")
-    .replace(/^[\\s|–—: /()[\\]{}-]+|[\\s|–—: /()[\\]{}-]+$/g, "")
-    .replace(/\\s{2,}/g, " ")
+    .replace(/^[\s|–—: /()[\]{}-]+|[\s|–—: /()[\]{}-]+$/g, "")
+    .replace(/\s{2,}/g, " ")
     .trim();
 
 export const allPosts = (posts as Post[])
