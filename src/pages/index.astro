@@ -38,14 +38,13 @@ const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.in
     {labels.length > 0 && (
       <section class="container browse-section" aria-labelledby="browse-title">
         <div class="browse-heading">
-          <div>
-            <p class="eyebrow">The writings</p>
-            <h2 id="browse-title">Explore by label</h2>
-          </div>
           <a class="archive-link" href={import.meta.env.BASE_URL + "archive/"}>View all writings →</a>
         </div>
 
-        <div class="label-tabs" role="tablist" aria-label="Writing labels">
+        <div class="label-tabs-wrap">
+          <button class="label-scroll label-scroll-left" type="button" aria-label="Show previous labels" data-label-scroll="-1">‹</button>
+          <div class="label-tabs" role="tablist" aria-label="Writing labels" tabindex="0">
+           role="tablist" aria-label="Writing labels">
           {labels.map((label, index) => (
             <button
               type="button"
@@ -59,6 +58,8 @@ const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.in
               {label}
             </button>
           ))}
+          </div>
+          <button class="label-scroll label-scroll-right" type="button" aria-label="Show more labels" data-label-scroll="1">›</button>
         </div>
 
         <div class="label-panels">
@@ -109,6 +110,12 @@ const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.in
 
   <script>
     const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-label-tab]"));
+    const tabScroller = document.querySelector<HTMLElement>(".label-tabs");
+    document.querySelectorAll<HTMLButtonElement>("[data-label-scroll]").forEach((button) => {
+      button.addEventListener("click", () => {
+        tabScroller?.scrollBy({ left: Number(button.dataset.labelScroll || 0) * 220, behavior: "smooth" });
+      });
+    });
     const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-label-panel]"));
 
     tabs.forEach((tab) => {
