@@ -28,6 +28,11 @@ export const allPosts = (posts as Post[])
   }))
   .sort((a, b) => +new Date(b.published) - +new Date(a.published));
 
+export const getPostImage = (post: Post) => {
+  const match = post.content.match(/<img[^>]+(?:src|data-src)=["']([^"']+)["']/i);
+  return match?.[1] ?? "";
+};
+
 export const getPost = (id: string) => allPosts.find((post) => post.id === id);
 
 export const getRelated = (current: Post) =>
