@@ -120,6 +120,7 @@ const clockLabel = findLabel("travelling clock", 1);
                     <p class="story-meta">{guestLabel}</p>
                     <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
                     <p>{post.excerpt}</p>
+                    <a class="guest-card-link" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read article →</a>
                   </div>
                 </article>
               ))}
@@ -136,20 +137,20 @@ const clockLabel = findLabel("travelling clock", 1);
               </div>
               <a class="archive-link" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(clockLabel)}>More →</a>
             </div>
-            <div class="nowhere-feature">
-              {postsByLabel(clockLabel).slice(0, 3).map((post, index) => (
-                <article class:list={["nowhere-story", { "nowhere-story-main": index === 0 }]}>
-                  {getPostImage(post) ? (
-                    <a class="nowhere-image" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>
-                      <img src={getPostImage(post)} alt="" loading="lazy" />
-                    </a>
-                  ) : <div class="nowhere-image nowhere-fallback" aria-hidden="true"></div>}
+            <div class="nowhere-list">
+              {postsByLabel(clockLabel).slice(0, 3).map((post) => (
+                <article class="nowhere-story">
                   <div class="nowhere-copy">
                     <p class="story-meta">{clockLabel}</p>
                     <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
                     <p>{post.excerpt}</p>
                     <a class="more-label" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read article →</a>
                   </div>
+                  {getPostImage(post) ? (
+                    <a class="nowhere-image" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>
+                      <img src={getPostImage(post)} alt="" loading="lazy" />
+                    </a>
+                  ) : <div class="nowhere-image nowhere-fallback" aria-hidden="true"></div>}
                 </article>
               ))}
             </div>
