@@ -4,8 +4,12 @@ import { allPosts, getPostPath, getPostImage } from "../lib/content";
 
 const latest = allPosts[0];
 const labels = [...new Set(allPosts.flatMap((post) => post.labels))].filter(Boolean).slice(0, 12);
-const initialLabel = labels[0] ?? "";
-const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.includes(label)).slice(0, 3);
+const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.includes(label));
+const findLabel = (needle: string, fallbackIndex: number) =>
+  labels.find((label) => label.toLocaleLowerCase().includes(needle.toLocaleLowerCase())) ?? labels[fallbackIndex] ?? "";
+const guestLabel = findLabel("guest author", 0);
+const clockLabel = findLabel("travelling clock", 1);
+const sectionLabels = [...new Set([guestLabel, clockLabel, ...labels])].filter(Boolean).slice(0, 5);
 ---
 
 <BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings. Essays, notes and reflections.">
@@ -38,12 +42,16 @@ const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.in
     {labels.length > 0 && (
       <section class="container browse-section" aria-labelledby="browse-title">
         <div class="browse-heading">
+          <div>
+            <p class="eyebrow">Explore</p>
+            <h2 id="browse-title">Explore</h2>
+          </div>
           <a class="archive-link" href={import.meta.env.BASE_URL + "archive/"}>View all writings →</a>
         </div>
 
         <div class="label-tabs-wrap">
           <button class="label-scroll label-scroll-left" type="button" aria-label="Show previous labels" data-label-scroll="-1">‹</button>
-          <div class="label-tabs" role="tablist" aria-label="Writing labels" tabindex="0">
+          <div class="label-tabs" role="tablist" aria-label="Writing labels">
            role="tablist" aria-label="Writing labels">
           {labels.map((label, index) => (
             <button
@@ -72,24 +80,49 @@ const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.in
               data-label-panel={label}
               hidden={index !== 0}
             >
-              <div class="story-list">
-                {postsByLabel(label).map((post, postIndex) => (
-                  <article class="story-row">
-                    <span class="story-number">{String(postIndex + 1).padStart(2, "0")}</span>
-                    {getPostImage(post) ? <div class="story-thumb"><img src={getPostImage(post)} alt="" loading="lazy" /></div> : <div class="story-thumb story-thumb-fallback" aria-hidden="true"></div>}
-                    <div class="story-main">
-                      <p class="story-meta">
-                        <time datetime={post.published}>
-                          {new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
-                        </time>
-                      </p>
-                      <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
-                      <p>{post.excerpt}</p>
-                    </div>
-                    <a class="story-arrow" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>↗</a>
-                  </article>
-                ))}
-              </div>
+              {index % 3 === 0 ? (
+                <div class="label-showcase label-showcase-grid">
+                  {postsByLabel(label).slice(0, 3).map((post, postIndex) => (
+                    <article class:list={["showcase-card", { "showcase-card-large": postIndex === 0 }]}>
+                      {getPostImage(post) ? <img src={getPostImage(post)} alt="" loading="lazy" /> : <div class="showcase-fallback" aria-hidden="true"></div>}
+                      <div class="showcase-overlay">
+                        <p class="story-meta">{label}</p>
+                        <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
+                        <p>{post.excerpt}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : index % 3 === 1 ? (
+                <div class="label-showcase editorial-block">
+                  {postsByLabel(label).slice(0, 2).map((post) => (
+                    <article class="editorial-story">
+                      {getPostImage(post) ? <div class="editorial-image"><img src={getPostImage(post)} alt="" loading="lazy" /></div> : null}
+                      <div>
+                        <p class="story-meta">{label}</p>
+                        <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
+                        <p>{post.excerpt}</p>
+                        <a class="more-label" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read article →</a>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div class="label-showcase story-list">
+                  {postsByLabel(label).slice(0, 3).map((post, postIndex) => (
+                    <article class="story-row">
+                      <span class="story-number">{String(postIndex + 1).padStart(2, "0")}</span>
+                      {getPostImage(post) ? <div class="story-thumb"><img src={getPostImage(post)} alt="" loading="lazy" /></div> : <div class="story-thumb story-thumb-fallback" aria-hidden="true"></div>}
+                      <div class="story-main">
+                        <p class="story-meta">{label}</p>
+                        <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
+                        <p>{post.excerpt}</p>
+                      </div>
+                      <a class="story-arrow" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>↗</a>
+                    </article>
+                  ))}
+                </div>
+              )}
               <a class="more-label" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(label)}>
                 More from {label} <span>→</span>
               </a>
@@ -111,11 +144,23 @@ const postsByLabel = (label: string) => allPosts.filter((post) => post.labels.in
   <script>
     const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-label-tab]"));
     const tabScroller = document.querySelector<HTMLElement>(".label-tabs");
-    document.querySelectorAll<HTMLButtonElement>("[data-label-scroll]").forEach((button) => {
+    const scrollButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-label-scroll]"));
+    const updateScrollButtons = () => {
+      if (!tabScroller) return;
+      const max = tabScroller.scrollWidth - tabScroller.clientWidth;
+      scrollButtons.forEach((button) => {
+        const direction = Number(button.dataset.labelScroll || 0);
+        button.disabled = direction < 0 ? tabScroller.scrollLeft <= 2 : tabScroller.scrollLeft >= max - 2;
+      });
+    };
+    scrollButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        tabScroller?.scrollBy({ left: Number(button.dataset.labelScroll || 0) * 220, behavior: "smooth" });
+        tabScroller?.scrollBy({ left: Number(button.dataset.labelScroll || 0) * 240, behavior: "smooth" });
       });
     });
+    tabScroller?.addEventListener("scroll", updateScrollButtons, { passive: true });
+    window.addEventListener("resize", updateScrollButtons);
+    updateScrollButtons();
     const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-label-panel]"));
 
     tabs.forEach((tab) => {
