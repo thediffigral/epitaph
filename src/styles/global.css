@@ -114,3 +114,18 @@ a{color:inherit} img{max-width:100%;height:auto} button{font:inherit}
   .nowhere-story-main .nowhere-copy h3{font-size:2.15rem}
   .label-showcase-grid{grid-template-columns:1fr;grid-auto-rows:230px}
 }
+
+.guest-card-link{display:inline-flex;margin-top:14px;color:var(--primary);font-weight:800;text-decoration:none}
+.guest-card-link:hover{text-decoration:underline}
+.nowhere-list{display:grid;gap:0;border-top:1px solid color-mix(in srgb,var(--outline) 24%,transparent)}
+.nowhere-list .nowhere-story{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:36px;align-items:center;padding:28px 0;border-bottom:1px solid color-mix(in srgb,var(--outline) 24%,transparent)}
+.nowhere-list .nowhere-copy{order:1}
+.nowhere-list .nowhere-image{order:2;height:190px;border-radius:18px}
+.nowhere-list .nowhere-copy h3{font-size:clamp(1.8rem,3.2vw,2.8rem);line-height:1.08}
+.nowhere-list .nowhere-copy>p:not(.story-meta){max-width:62ch}
+@media(max-width:700px){
+  .nowhere-list .nowhere-story{grid-template-columns:minmax(0,1fr) 110px;gap:16px;padding:22px 0}
+  .nowhere-list .nowhere-image{height:120px}
+  .nowhere-list .nowhere-copy h3{font-size:1.55rem}
+  .nowhere-list .nowhere-copy>p:not(.story-meta){font-size:.94rem;line-height:1.6}
+}
