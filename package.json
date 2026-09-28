@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^5.14.0"
+    "astro": "^5.14.0",
+    "@hixbe/kalpurush": "^5.2.5"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
