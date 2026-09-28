@@ -13,8 +13,19 @@ export type Post = {
   excerpt: string;
 };
 
+const englishLabel = (label: string) =>
+  label
+    .replace(/[\u0980-\u09FF]+/g, " ")
+    .replace(/^[\\s|–—: /()[\\]{}-]+|[\\s|–—: /()[\\]{}-]+$/g, "")
+    .replace(/\\s{2,}/g, " ")
+    .trim();
+
 export const allPosts = (posts as Post[])
   .filter((post) => post.id && post.title)
+  .map((post) => ({
+    ...post,
+    labels: [...new Set(post.labels.map(englishLabel).filter(Boolean))]
+  }))
   .sort((a, b) => +new Date(b.published) - +new Date(a.published));
 
 export const getPost = (id: string) => allPosts.find((post) => post.id === id);
