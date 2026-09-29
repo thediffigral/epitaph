@@ -10,7 +10,9 @@ const findLabel = (needle: string, fallbackIndex: number) =>
 const guestLabel = findLabel("guest author", 0);
 const clockLabel = findLabel("travelling clock", 1);
 const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie") ?? "";
-const hostelLabel = [...new Set(allPosts.flatMap((post) => post.labels))].find((label) => label.toLocaleLowerCase() === "new boys hostel") ?? "";
+const hostelPosts = allPosts.filter((post) =>
+  post.labels.some((label) => label.trim().toLocaleLowerCase() === "new boys hostel")
+).slice(0, 2);
 
 const normalizeBloggerUrl = (url: string) => {
   try {
@@ -197,17 +199,17 @@ const normalizeTitle = (title: string) =>
           </section>
         )}
 
-        {hostelLabel && (
+        {hostelPosts.length > 0 && (
           <section class="home-section old-gold-section" aria-labelledby="old-gold-title">
             <div class="section-heading">
               <div>
                 <p class="eyebrow">From the archive</p>
                 <h2 id="old-gold-title">Old Gold Days</h2>
               </div>
-              <a class="archive-link" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(hostelLabel)}>More →</a>
+              <a class="archive-link" href={import.meta.env.BASE_URL + "archive/?tag=new%20boys%20hostel"}>More →</a>
             </div>
             <div class="guest-card-grid">
-              {postsByLabel(hostelLabel).slice(0, 2).map((post) => (
+              {hostelPosts.map((post) => (
                 <article class="guest-card">
                   {getPostImage(post) ? (
                     <a class="guest-card-image" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>
@@ -215,7 +217,7 @@ const normalizeTitle = (title: string) =>
                     </a>
                   ) : <div class="guest-card-image guest-card-fallback" aria-hidden="true"></div>}
                   <div class="guest-card-body">
-                    <p class="story-meta">{hostelLabel}</p>
+                    <p class="story-meta">new boys hostel</p>
                     <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
                     <p>{post.excerpt}</p>
                     <a class="guest-card-link" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read article →</a>
