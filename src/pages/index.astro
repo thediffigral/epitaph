@@ -32,6 +32,42 @@ const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie")
       </section>
     )}
 
+    <section class="container fiction-feature" aria-labelledby="fiction-title">
+      <div class="section-heading fiction-heading">
+        <div>
+          <p class="eyebrow">Fiction</p>
+          <h2 id="fiction-title">Three stories</h2>
+        </div>
+        <span class="fiction-note">Selected from the archive</span>
+      </div>
+      <div class="fiction-grid">
+        {[
+          "https://prankrishnab.blogspot.com/2022/10/blog-post.html",
+          "https://prankrishnab.blogspot.com/2017/11/porisoy.html",
+          "https://prankrishnab.blogspot.com/2017/11/protiddhwoni.html"
+        ].map((url, index) => {
+          const post = allPosts.find((item) => item.url === url || item.url.replace(/\/$/, "") === url.replace(/\/$/, ""));
+          return post ? (
+            <article class:list={["fiction-card", { "fiction-card-featured": index === 0 }]}>
+              {getPostImage(post) ? (
+                <a class="fiction-image" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>
+                  <img src={getPostImage(post)} alt="" loading="lazy" />
+                </a>
+              ) : (
+                <a class="fiction-image fiction-image-fallback" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}></a>
+              )}
+              <div class="fiction-card-body">
+                <p class="story-meta">Fiction · 0{index + 1}</p>
+                <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
+                <p>{post.excerpt}</p>
+                <a class="fiction-read" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read story <span>↗</span></a>
+              </div>
+            </article>
+          ) : null;
+        })}
+      </div>
+    </section>
+
     {labels.length > 0 && (
       <section class="container browse-section" aria-labelledby="browse-title">
         <div class="browse-heading">
