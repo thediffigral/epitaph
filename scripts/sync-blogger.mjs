@@ -29,10 +29,21 @@ const params = new URLSearchParams({
   status: "LIVE"
 });
 
-const res = await fetch(base + "?" + params);
-if (!res.ok) throw new Error("Blogger API failed: " + res.status + " " + await res.text());
+const items = [];
+let pageToken = "";
 
-const json = await res.json();
+do {
+  const pageParams = new URLSearchParams(params);
+  if (pageToken) pageParams.set("pageToken", pageToken);
+
+  const res = await fetch(base + "?" + pageParams);
+  if (!res.ok) throw new Error("Blogger API failed: " + res.status + " " + await res.text());
+
+  const json = await res.json();
+  items.push(...(json.items ?? []));
+  pageToken = json.nextPageToken ?? "";
+} while (pageToken);
+
 
 const strip = (html) =>
   html
@@ -47,7 +58,7 @@ const excerpt = (html) => {
   return text.slice(0, 180) + (text.length > 180 ? "…" : "");
 };
 
-const posts = (json.items ?? []).map((p) => ({
+const posts = items.map((p) => ({
   id: p.id,
   title: p.title ?? "Untitled",
   content: p.content ?? "",
