@@ -142,9 +142,9 @@ a{color:inherit} img{max-width:100%;height:auto} button{font:inherit}
 .fiction-feature{padding:10px 0 82px}
 .fiction-heading{margin-bottom:24px}
 .fiction-note{color:var(--muted);font-size:.8rem}
-.fiction-grid{display:grid;grid-template-columns:1.35fr .85fr;grid-template-rows:240px 240px;gap:16px}
+.fiction-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .fiction-card{position:relative;overflow:hidden;min-width:0;border-radius:22px;background:var(--surface);border:1px solid color-mix(in srgb,var(--outline) 18%,transparent);box-shadow:var(--shadow)}
-.fiction-card-featured{grid-row:1 / span 2}
+.fiction-card-featured{grid-column:auto;grid-row:auto}
 .fiction-image{position:absolute;inset:0;display:block;background:var(--surface-variant);overflow:hidden}
 .fiction-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
 .fiction-card:hover .fiction-image img{transform:scale(1.035)}
@@ -154,6 +154,7 @@ a{color:inherit} img{max-width:100%;height:auto} button{font:inherit}
 .fiction-card-body .story-meta{color:#ddd}
 .fiction-card-body h3{margin:4px 0 9px;font-family:"Kalpurush",Georgia,"Times New Roman",serif;font-size:clamp(1.55rem,2.7vw,2.5rem);line-height:1.08;letter-spacing:-.025em}
 .fiction-card:not(.fiction-card-featured) .fiction-card-body h3{font-size:1.55rem}
+.fiction-card{min-height:390px}
 .fiction-card-body h3 a{text-decoration:none}
 .fiction-card-body>p:not(.story-meta){margin:0;max-width:62ch;color:#eee;line-height:1.55;font-family:"Kalpurush",Georgia,"Times New Roman",serif;font-size:.94rem}
 .fiction-read{display:inline-flex;align-items:center;gap:6px;margin-top:12px;color:#fff;font-weight:800;text-decoration:none;font-size:.84rem}
@@ -163,7 +164,7 @@ a{color:inherit} img{max-width:100%;height:auto} button{font:inherit}
   .fiction-feature{padding-bottom:58px}
   .fiction-heading{align-items:flex-end}
   .fiction-note{display:none}
-  .fiction-grid{grid-template-columns:1fr;grid-template-rows:none}
-  .fiction-card,.fiction-card-featured{min-height:330px;grid-row:auto}
-  .fiction-card-featured{min-height:390px}
+  .fiction-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .fiction-card,.fiction-card-featured{min-height:340px;grid-row:auto}
+  .fiction-card-featured{min-height:340px}
 }
