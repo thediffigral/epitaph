@@ -10,7 +10,7 @@ const findLabel = (needle: string, fallbackIndex: number) =>
 const guestLabel = findLabel("guest author", 0);
 const clockLabel = findLabel("travelling clock", 1);
 const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie") ?? "";
-const hostelLabel = labels.find((label) => label.toLocaleLowerCase() === "new boys hostel") ?? "";
+const hostelLabel = [...new Set(allPosts.flatMap((post) => post.labels))].find((label) => label.toLocaleLowerCase() === "new boys hostel") ?? "";
 
 const normalizeBloggerUrl = (url: string) => {
   try {
@@ -143,9 +143,9 @@ const normalizeTitle = (title: string) =>
 
         {clockLabel && (
           <section class="home-section nowhere-section" aria-labelledby="nowhere-title">
-            <div class="section-heading">
+            <div class="browse-heading">
               <div>
-                <h2 id="nowhere-title">A TRAVELLING CLOCK</h2>
+                <p id="nowhere-title" class="eyebrow">A TRAVELLING CLOCK</p>
               </div>
               <a class="archive-link" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(clockLabel)}>More →</a>
             </div>
