@@ -10,6 +10,14 @@ const findLabel = (needle: string, fallbackIndex: number) =>
 const guestLabel = findLabel("guest author", 0);
 const clockLabel = findLabel("travelling clock", 1);
 const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie") ?? "";
+
+const normalizeBloggerUrl = (url: string) => {
+  try {
+    return new URL(url).pathname.replace(/\/+$/, "").toLowerCase();
+  } catch {
+    return url.replace(/\/+$/, "").toLowerCase();
+  }
+};
 ---
 
 <BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings. Essays, notes and reflections.">
@@ -47,7 +55,7 @@ const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie")
           "https://prankrishnab.blogspot.com/2017/11/protiddhwoni.html",
           "https://prankrishnab.blogspot.com/2013/11/blog-post.html"
         ].map((url, index) => {
-          const post = allPosts.find((item) => item.url === url || item.url.replace(/\/$/, "") === url.replace(/\/$/, ""));
+          const post = allPosts.find((item) => normalizeBloggerUrl(item.url) === normalizeBloggerUrl(url));
           return post ? (
             <article class:list={["fiction-card", { "fiction-card-featured": index === 0 }]}>
               {getPostImage(post) ? (
