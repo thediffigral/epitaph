@@ -129,3 +129,10 @@ a{color:inherit} img{max-width:100%;height:auto} button{font:inherit}
   .nowhere-list .nowhere-copy h3{font-size:1.55rem}
   .nowhere-list .nowhere-copy>p:not(.story-meta){font-size:.94rem;line-height:1.6}
 }
+
+.movie-section{padding-top:92px}
+.movie-showcase{margin-top:6px}
+.movie-showcase .showcase-card{box-shadow:var(--shadow);border:1px solid color-mix(in srgb,var(--outline) 18%,transparent)}
+.movie-showcase .showcase-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.78) 100%);pointer-events:none}
+.movie-showcase .showcase-overlay{z-index:1;background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.82) 100%)}
+.movie-showcase .showcase-overlay h3{font-size:clamp(1.5rem,3vw,2.55rem)}
