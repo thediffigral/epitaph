@@ -40,7 +40,17 @@ export const getRelated = (current: Post) =>
     .filter((post) => post.id !== current.id && post.labels.some((x) => current.labels.includes(x)))
     .slice(0, 3);
 
-export const getPostPath = (post: Post) => "post/" + encodeURIComponent(post.id);
+export const getPostSlug = (post: Post) => {
+  try {
+    const path = new URL(post.url).pathname.replace(/\/+$/, "");
+    const slug = path.split("/").pop() || "";
+    return decodeURIComponent(slug).trim() || post.id;
+  } catch {
+    return post.id;
+  }
+};
+
+export const getPostPath = (post: Post) => "post/" + encodeURIComponent(getPostSlug(post));
 
 export const getBloggerPath = (post: Post) => {
   if (post.path) return post.path.replace(/^\/+/, "").replace(/\/$/, "");
