@@ -18,6 +18,9 @@ const normalizeBloggerUrl = (url: string) => {
     return url.replace(/\/+$/, "").toLowerCase();
   }
 };
+
+const normalizeTitle = (title: string) =>
+  title.replace(/^#+\s*/, "").trim().toLocaleLowerCase();
 ---
 
 <BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings. Essays, notes and reflections.">
