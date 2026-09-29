@@ -15,7 +15,6 @@ export function getStaticPaths() {
 
 const { post, previous, next } = Astro.props;
 const canonical = getPostPath(post);
-const canonical = getPostPath(post);
 ---
 <BaseLayout title={post.title + " — Epitaph"} description={post.excerpt} canonical={canonical}>
   <article class="page article-wrap">
