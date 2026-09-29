@@ -9,6 +9,7 @@ const findLabel = (needle: string, fallbackIndex: number) =>
   labels.find((label) => label.toLocaleLowerCase().includes(needle.toLocaleLowerCase())) ?? labels[fallbackIndex] ?? "";
 const guestLabel = findLabel("guest author", 0);
 const clockLabel = findLabel("travelling clock", 1);
+const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie") ?? "";
 ---
 
 <BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings. Essays, notes and reflections.">
@@ -24,14 +25,7 @@ const clockLabel = findLabel("travelling clock", 1);
           </p>
           <h1>{latest.title}</h1>
           <p class="feature-excerpt">{latest.excerpt}</p>
-          {latest.labels.length > 0 && (
-            <div class="feature-labels">
-              {latest.labels.slice(0, 3).map((label) => (
-                <span>{label}</span>
-              ))}
-            </div>
-          )}
-          <a class="feature-link" href={import.meta.env.BASE_URL + getPostPath(latest) + "/"}>Read the latest article <span>→</span></a>
+          <a class="feature-link" href={import.meta.env.BASE_URL + getPostPath(latest) + "/"}>Read more <span>→</span></a>
         </div>
         {getPostImage(latest) ? <div class="feature-thumb"><img src={getPostImage(latest)} alt="" loading="eager" /></div> : <div class="feature-thumb feature-thumb-fallback" aria-hidden="true"></div>}
         <div class="feature-rule" aria-hidden="true"></div>
@@ -42,7 +36,6 @@ const clockLabel = findLabel("travelling clock", 1);
       <section class="container browse-section" aria-labelledby="browse-title">
         <div class="browse-heading">
           <div>
-            <p class="eyebrow">Explore</p>
             <h2 id="browse-title">Explore</h2>
           </div>
           <a class="archive-link" href={import.meta.env.BASE_URL + "archive/"}>View all writings →</a>
@@ -99,11 +92,39 @@ const clockLabel = findLabel("travelling clock", 1);
           ))}
         </div>
 
+        {clockLabel && (
+          <section class="home-section nowhere-section" aria-labelledby="nowhere-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Another corner</p>
+                <h2 id="nowhere-title">Nowhere to go</h2>
+              </div>
+              <a class="archive-link" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(clockLabel)}>More →</a>
+            </div>
+            <div class="nowhere-list">
+              {postsByLabel(clockLabel).slice(0, 3).map((post) => (
+                <article class="nowhere-story">
+                  <div class="nowhere-copy">
+                    <p class="story-meta">{clockLabel}</p>
+                    <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
+                    <p>{post.excerpt}</p>
+                    <a class="more-label" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read article →</a>
+                  </div>
+                  {getPostImage(post) ? (
+                    <a class="nowhere-image" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>
+                      <img src={getPostImage(post)} alt="" loading="lazy" />
+                    </a>
+                  ) : <div class="nowhere-image nowhere-fallback" aria-hidden="true"></div>}
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
         {guestLabel && (
           <section class="home-section guest-writes" aria-labelledby="guest-writes-title">
             <div class="section-heading">
               <div>
-                <p class="eyebrow">From the label</p>
                 <h2 id="guest-writes-title">Guest author writes</h2>
               </div>
               <a class="archive-link" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(guestLabel)}>More →</a>
@@ -151,6 +172,34 @@ const clockLabel = findLabel("travelling clock", 1);
                       <img src={getPostImage(post)} alt="" loading="lazy" />
                     </a>
                   ) : <div class="nowhere-image nowhere-fallback" aria-hidden="true"></div>}
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {movieLabel && (
+          <section class="home-section movie-section" aria-labelledby="movie-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">From the label</p>
+                <h2 id="movie-title">dynamical frame</h2>
+              </div>
+              <a class="archive-link" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(movieLabel)}>More →</a>
+            </div>
+            <div class="showcase-grid movie-showcase">
+              {postsByLabel(movieLabel).slice(0, 3).map((post, index) => (
+                <article class:list={["showcase-card", { "showcase-card-large": index === 0 }]}>
+                  {getPostImage(post) ? (
+                    <img src={getPostImage(post)} alt="" loading="lazy" />
+                  ) : (
+                    <div class="showcase-fallback" aria-hidden="true"></div>
+                  )}
+                  <div class="showcase-overlay">
+                    <p class="story-meta">{movieLabel}</p>
+                    <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
+                    <p>{post.excerpt}</p>
+                  </div>
                 </article>
               ))}
             </div>
