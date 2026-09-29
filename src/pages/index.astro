@@ -15,7 +15,8 @@ const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie")
 <BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings. Essays, notes and reflections.">
   <main>
     {latest && (
-      <section class="feature container">
+      <section class:list={["feature", "container", { "feature-with-image": getPostImage(latest) }]} style={getPostImage(latest) ? "background-image: url('" + getPostImage(latest) + "')" : undefined}>
+        <div class="feature-overlay" aria-hidden="true"></div>
         <div class="feature-copy">
           <p class="eyebrow">Featured · Latest</p>
           <p class="feature-date">
@@ -27,7 +28,6 @@ const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie")
           <p class="feature-excerpt">{latest.excerpt}</p>
           <a class="feature-link" href={import.meta.env.BASE_URL + getPostPath(latest) + "/"}>Read more <span>→</span></a>
         </div>
-        {getPostImage(latest) ? <div class="feature-thumb"><img src={getPostImage(latest)} alt="" loading="eager" /></div> : <div class="feature-thumb feature-thumb-fallback" aria-hidden="true"></div>}
         <div class="feature-rule" aria-hidden="true"></div>
       </section>
     )}
@@ -36,7 +36,7 @@ const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie")
       <div class="section-heading fiction-heading">
         <div>
           <p class="eyebrow">Fiction</p>
-          <h2 id="fiction-title">Three stories</h2>
+          <h2 id="fiction-title">Four stories</h2>
         </div>
         <span class="fiction-note">Selected from the archive</span>
       </div>
@@ -44,7 +44,8 @@ const movieLabel = labels.find((label) => label.toLocaleLowerCase() === "movie")
         {[
           "https://prankrishnab.blogspot.com/2022/10/blog-post.html",
           "https://prankrishnab.blogspot.com/2017/11/porisoy.html",
-          "https://prankrishnab.blogspot.com/2017/11/protiddhwoni.html"
+          "https://prankrishnab.blogspot.com/2017/11/protiddhwoni.html",
+          "https://prankrishnab.blogspot.com/2013/11/blog-post.html"
         ].map((url, index) => {
           const post = allPosts.find((item) => item.url === url || item.url.replace(/\/$/, "") === url.replace(/\/$/, ""));
           return post ? (
