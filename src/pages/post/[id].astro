@@ -22,7 +22,10 @@ const canonical = getPostPath(post);
     <p class="article-author">{post.author}</p>
     <div class="article-content" set:html={post.content}></div>
     <div class="article-after">
-      {post.updated !== post.published && <p class="updated-note">Updated on {new Date(post.updated).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>}
+      <div class="article-dates">
+        <p class="published-note">Published in this blog on {new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
+        {post.updated !== post.published && <p class="updated-note">Last updated on {new Date(post.updated).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>}
+      </div>
       {post.labels.length > 0 && (
         <section class="read-similar" aria-labelledby="read-similar-title">
           <h2 id="read-similar-title">Read similar</h2>
