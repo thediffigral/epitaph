@@ -2,6 +2,7 @@ import posts from "../../data/posts.json";
 
 export type Post = {
   id: string;
+  slug?: string;
   title: string;
   content: string;
   url: string;
@@ -41,10 +42,11 @@ export const getRelated = (current: Post) =>
     .slice(0, 3);
 
 export const getPostSlug = (post: Post) => {
+  if (post.slug) return post.slug;
   try {
     const path = new URL(post.url).pathname.replace(/\/+$/, "");
-    const slug = path.split("/").pop() || "";
-    return decodeURIComponent(slug).trim() || post.id;
+    const last = path.split("/").filter(Boolean).pop() ?? "";
+    return decodeURIComponent(last).replace(/\.html?$/i, "").trim() || post.id;
   } catch {
     return post.id;
   }
