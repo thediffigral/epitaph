@@ -40,6 +40,16 @@ const canonical = getPostPath(post);
       </div>
     </div>
 
+    <section class="container author-note post-author-note">
+      <div>
+        <p class="eyebrow">এপিটাফ · Epitaph</p>
+        <h2>&#x20;কিমান ওখ হ’ব লাগে মানুহ?</h2>
+        <p>Clouds are not spheres, Mountains are not cones, coastlines are not circles, and bark is not smooth, nor does lightning travel in a straight line. - (Mandelbrot)</p>
+        <p>Thanks for visiting the blog.<br />Epitaph - by Prankrishna Borgohain</p>
+        <p><a href="https://thediffigral.github.io/prankrishna-borgohain/">Visit my website</a></p>
+      </div>
+    </section>
+
     <nav class="article-nav" aria-label="Article navigation">
       {previous ? <a href={import.meta.env.BASE_URL + getPostPath(previous) + "/"}>← {previous.title}</a> : <span />}
       {next ? <a href={import.meta.env.BASE_URL + getPostPath(next) + "/"}>{next.title} →</a> : <span />}
