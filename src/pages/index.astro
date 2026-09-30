@@ -56,12 +56,16 @@ const normalizeTitle = (title: string) =>
       </div>
       <div class="fiction-grid">
         {[
-          "https://prankrishnab.blogspot.com/2022/10/blog-post.html",
-          "https://prankrishnab.blogspot.com/2017/11/porisoy.html",
-          "https://prankrishnab.blogspot.com/2017/11/protiddhwoni.html",
-          "https://prankrishnab.blogspot.com/2013/11/blog-post.html"
-        ].map((url, index) => {
-          const post = allPosts.find((item) => normalizeBloggerUrl(item.url) === normalizeBloggerUrl(url));
+          { slug: "iti-gojo", legacyUrl: "https://prankrishnab.blogspot.com/2022/10/blog-post.html" },
+          { slug: "porisoy", legacyUrl: "https://prankrishnab.blogspot.com/2017/11/porisoy.html" },
+          { slug: "protiddhwoni", legacyUrl: "https://prankrishnab.blogspot.com/2017/11/protiddhwoni.html" },
+          { slug: "blog-post-10", legacyUrl: "https://prankrishnab.blogspot.com/2013/11/blog-post.html" }
+        ].map(({ slug, legacyUrl }, index) => {
+          const post = allPosts.find((item) =>
+            item.slug === slug ||
+            item.url.toLocaleLowerCase() === legacyUrl.toLocaleLowerCase() ||
+            normalizeBloggerUrl(item.url) === normalizeBloggerUrl(legacyUrl)
+          );
           return post ? (
             <article class:list={["fiction-card", { "fiction-card-featured": index === 0 }]}>
               {getPostImage(post) ? (
