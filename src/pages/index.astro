@@ -193,6 +193,41 @@ const fourStoryTitles = [
           </section>
         )}
 
+        <section class="home-section get-me-back-section" aria-labelledby="get-me-back-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">From the archive</p>
+              <h2 id="get-me-back-title">get me back!</h2>
+            </div>
+          </div>
+          <div class="guest-card-grid">
+            {[
+              "a-team-filedr-footballr-final-khn",
+              "bogori-diwox",
+              "class-ten-gentleman",
+              "mur-nawosatrabax",
+              "xonivonga-aru-manxor-xokam"
+            ].map((slug) => {
+              const post = allPosts.find((item) => item.slug === slug);
+              return post ? (
+                <article class="guest-card">
+                  {getPostImage(post) ? (
+                    <a class="guest-card-image" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>
+                      <img src={getPostImage(post)} alt="" loading="lazy" />
+                    </a>
+                  ) : <div class="guest-card-image guest-card-fallback" aria-hidden="true"></div>}
+                  <div class="guest-card-body">
+                    <p class="story-meta">get me back!</p>
+                    <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
+                    <p>{post.excerpt}</p>
+                    <a class="guest-card-link" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read article →</a>
+                  </div>
+                </article>
+              ) : null;
+            })}
+          </div>
+        </section>
+
         {hostelPosts.length > 0 && (
           <section class="home-section old-gold-section" aria-labelledby="old-gold-title">
             <div class="section-heading">
