@@ -44,7 +44,6 @@ do {
   pageToken = json.nextPageToken ?? "";
 } while (pageToken);
 
-
 const strip = (html) =>
   html
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
@@ -58,8 +57,27 @@ const excerpt = (html) => {
   return text.slice(0, 180) + (text.length > 180 ? "…" : "");
 };
 
+const getSlug = (url, id) => {
+  try {
+    const pathname = new URL(url).pathname.replace(/\/+$/, "");
+    const last = pathname.split("/").filter(Boolean).pop() ?? "";
+    const slug = decodeURIComponent(last).replace(/\.html?$/i, "").trim();
+    return slug || id;
+  } catch {
+    return id;
+  }
+};
+
+const usedSlugs = new Map();
+const uniqueSlug = (slug) => {
+  const count = usedSlugs.get(slug) ?? 0;
+  usedSlugs.set(slug, count + 1);
+  return count === 0 ? slug : slug + "-" + (count + 1);
+};
+
 const posts = items.map((p) => ({
   id: p.id,
+  slug: uniqueSlug(getSlug(p.url ?? "", p.id)),
   title: p.title ?? "Untitled",
   content: p.content ?? "",
   url: p.url ?? "",
