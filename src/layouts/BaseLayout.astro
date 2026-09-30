@@ -54,12 +54,6 @@ const imageUrl = new URL(image, siteUrl).href;
     <main id="main">
       <slot />
     </main>
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <small>© {new Date().getFullYear()} Epitaph · Prankrishna Borgohain</small>
-        <a href={import.meta.env.BASE_URL + "rss.xml"}>RSS feed</a>
-      </div>
-    </footer>
     <script>
       const root = document.documentElement;
       const button = document.getElementById("theme-toggle");
