@@ -1,10 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { allPosts, getPostPath } from "../../lib/content";
+import { allPosts, getPostPath, getPostSlug } from "../../lib/content";
 
 export function getStaticPaths() {
   return allPosts.map((post, index) => ({
-    params: { id: post.id },
+    params: { id: getPostSlug(post) },
     props: {
       post,
       previous: allPosts[index + 1],
