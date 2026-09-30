@@ -1,4 +1,5 @@
 name: Build and deploy Epitaph
+# Rebuilds the complete Astro site on every main-branch update.
 
 on:
   push:
