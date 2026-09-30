@@ -14,16 +14,15 @@ const hostelPosts = allPosts.filter((post) =>
   post.labels.some((label) => label.trim().toLocaleLowerCase() === "new boys hostel")
 ).slice(0, 2);
 
-const normalizeBloggerUrl = (url: string) => {
-  try {
-    return new URL(url).pathname.replace(/\/+$/, "").toLowerCase();
-  } catch {
-    return url.replace(/\/+$/, "").toLowerCase();
-  }
-};
-
 const normalizeTitle = (title: string) =>
   title.replace(/^#+\s*/, "").trim().toLocaleLowerCase();
+
+const fourStoryTitles = [
+  "ইতি গজ",
+  "পৰিচয়",
+  "প্ৰতিধ্বনি",
+  "ভাড়াঘৰ"
+];
 ---
 
 <BaseLayout title="এপিটাফ — Epitaph" description="Prankrishna Borgohain's writings. Essays, notes and reflections.">
@@ -55,17 +54,8 @@ const normalizeTitle = (title: string) =>
         <span class="fiction-note">Selected from the archive</span>
       </div>
       <div class="fiction-grid">
-        {[
-          { slug: "iti-gojo", legacyUrl: "https://prankrishnab.blogspot.com/2022/10/blog-post.html" },
-          { slug: "porisoy", legacyUrl: "https://prankrishnab.blogspot.com/2017/11/porisoy.html" },
-          { slug: "protiddhwoni", legacyUrl: "https://prankrishnab.blogspot.com/2017/11/protiddhwoni.html" },
-          { slug: "blog-post-10", legacyUrl: "https://prankrishnab.blogspot.com/2013/11/blog-post.html" }
-        ].map(({ slug, legacyUrl }, index) => {
-          const post = allPosts.find((item) =>
-            item.slug === slug ||
-            item.url.toLocaleLowerCase() === legacyUrl.toLocaleLowerCase() ||
-            normalizeBloggerUrl(item.url) === normalizeBloggerUrl(legacyUrl)
-          );
+        {fourStoryTitles.map((title, index) => {
+          const post = allPosts.find((item) => normalizeTitle(item.title) === normalizeTitle(title));
           return post ? (
             <article class:list={["fiction-card", { "fiction-card-featured": index === 0 }]}>
               {getPostImage(post) ? (
