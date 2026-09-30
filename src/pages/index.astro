@@ -49,7 +49,7 @@ const fourStoryTitles = [
       <div class="section-heading fiction-heading">
         <div>
           <p class="eyebrow">Fiction</p>
-          <h2 id="fiction-title">Four stories</h2>
+          <h2 id="fiction-title">what's your story?</h2>
         </div>
         <span class="fiction-note">Selected from the archive</span>
       </div>
@@ -138,27 +138,28 @@ const fourStoryTitles = [
         </div>
 
         {clockLabel && (
-          <section class="home-section nowhere-section" aria-labelledby="nowhere-title">
-            <div class="browse-heading">
+          <section class="home-section travelling-clock-section" aria-labelledby="travelling-clock-title">
+            <div class="section-heading">
               <div>
-                <p id="nowhere-title" class="eyebrow">A TRAVELLING CLOCK</p>
+                <p class="eyebrow">A TRAVELLING CLOCK</p>
+                <h2 id="travelling-clock-title">Stories that keep moving</h2>
               </div>
               <a class="archive-link" href={import.meta.env.BASE_URL + "archive/?tag=" + encodeURIComponent(clockLabel)}>More →</a>
             </div>
-            <div class="nowhere-list">
+            <div class="guest-card-grid">
               {postsByLabel(clockLabel).slice(0, 3).map((post) => (
-                <article class="nowhere-story">
-                  <div class="nowhere-copy">
+                <article class="guest-card">
+                  {getPostImage(post) ? (
+                    <a class="guest-card-image" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>
+                      <img src={getPostImage(post)} alt="" loading="lazy" />
+                    </a>
+                  ) : <div class="guest-card-image guest-card-fallback" aria-hidden="true"></div>}
+                  <div class="guest-card-body">
                     <p class="story-meta">{clockLabel}</p>
                     <h3><a href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>{post.title}</a></h3>
                     <p>{post.excerpt}</p>
-                    <a class="more-label" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read article →</a>
+                    <a class="guest-card-link" href={import.meta.env.BASE_URL + getPostPath(post) + "/"}>Read article →</a>
                   </div>
-                  {getPostImage(post) ? (
-                    <a class="nowhere-image" href={import.meta.env.BASE_URL + getPostPath(post) + "/"} aria-label={"Read " + post.title}>
-                      <img src={getPostImage(post)} alt="" loading="lazy" />
-                    </a>
-                  ) : <div class="nowhere-image nowhere-fallback" aria-hidden="true"></div>}
                 </article>
               ))}
             </div>
