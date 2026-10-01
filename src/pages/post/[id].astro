@@ -33,6 +33,7 @@ const canonical = getPostPath(post);
       <div class="article-dates">
         <p class="published-note">Originally published in this blog · {new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
         <p class="updated-note">Updated on {new Date(post.updated).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
+        <p class="post-view-count" aria-live="polite"><span id="goatcounter-views">Views</span></p>
       </div>
     </div>
     <section class="container author-note post-author-note">
@@ -49,4 +50,16 @@ const canonical = getPostPath(post);
       {next ? <a href={import.meta.env.BASE_URL + getPostPath(next) + "/"}>{next.title} →</a> : <span />}
     </nav>
   </article>
+  <script>
+    const stats = document.getElementById("goatcounter-views");
+    const path = window.location.pathname;
+    if (stats && path) {
+      fetch("https://thediffigral.goatcounter.com/counter/" + encodeURIComponent(path) + ".json")
+        .then((response) => response.ok ? response.json() : null)
+        .then((data) => {
+          if (data?.count) stats.textContent = data.count + " views";
+        })
+        .catch(() => {});
+    }
+  </script>
 </BaseLayout>
