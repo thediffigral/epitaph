@@ -1,0 +1,97 @@
+.travelling-clock-section .guest-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid color-mix(in srgb,var(--outline) 24%,transparent);
+}
+
+.travelling-clock-section .guest-card {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 220px;
+  grid-template-areas: "body image";
+  gap: 36px;
+  align-items: center;
+  padding: 28px 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb,var(--outline) 24%,transparent);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.travelling-clock-section .guest-card-image {
+  grid-area: image;
+  width: 220px;
+  height: 150px;
+  margin-left: auto;
+  border-radius: 18px;
+  background: var(--surface-variant);
+  overflow: hidden;
+}
+
+.travelling-clock-section .guest-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .35s ease;
+}
+
+.travelling-clock-section .guest-card:hover .guest-card-image img {
+  transform: scale(1.035);
+}
+
+.travelling-clock-section .guest-card-body {
+  grid-area: body;
+  padding: 0;
+}
+
+.travelling-clock-section .guest-card-body h3 {
+  margin: 5px 0 10px;
+  font-size: clamp(1.55rem,3vw,2.45rem);
+  line-height: 1.08;
+}
+
+.travelling-clock-section .guest-card-body > p:last-of-type {
+  max-width: 66ch;
+  margin: 0;
+  color: var(--muted);
+  font-family: "Kalpurush",Georgia,"Times New Roman",serif;
+  line-height: 1.65;
+}
+
+.travelling-clock-section .guest-card-link {
+  margin-top: 12px;
+}
+
+.travelling-clock-section .guest-card-fallback {
+  background: linear-gradient(135deg,var(--surface-variant),var(--primary));
+}
+
+@media(max-width:700px) {
+  .travelling-clock-section .guest-card {
+    grid-template-columns: minmax(0,1fr) 110px;
+    gap: 16px;
+    padding: 22px 0;
+  }
+
+  .travelling-clock-section .guest-card-image {
+    width: 110px;
+    height: 120px;
+    border-radius: 14px;
+  }
+
+  .travelling-clock-section .guest-card-body h3 {
+    font-size: 1.45rem;
+  }
+
+  .travelling-clock-section .guest-card-body > p:last-of-type {
+    font-size: .94rem;
+    line-height: 1.6;
+  }
+
+  .travelling-clock-section .guest-card-link {
+    font-size: .82rem;
+  }
+}
