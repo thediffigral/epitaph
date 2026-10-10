@@ -38,6 +38,13 @@ const canonical = getPostPath(post);
         <p class="published-note">Originally published in this blog · {new Date(post.published).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
         <p class="updated-note">Updated on {new Date(post.updated).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
         <p class="post-view-count" aria-live="polite"><span id="goatcounter-views">Views</span></p>
+    <section class="post-love" data-post-id={post.id} aria-label="Love this post">
+      <button class="post-love-button" type="button" aria-pressed="false" disabled>
+        <span class="post-love-heart" aria-hidden="true">♡</span>
+        <span class="post-love-label">Loading likes…</span>
+      </button>
+      <p class="post-love-message" aria-live="polite"></p>
+    </section>
       </div>
     </div>
 
@@ -68,7 +75,80 @@ const canonical = getPostPath(post);
         .catch(() => {});
     }
   </script>
+
+  <script>
+    const loveSection = document.querySelector(".post-love");
+    const loveButton = loveSection?.querySelector(".post-love-button");
+    const loveLabel = loveSection?.querySelector(".post-love-label");
+    const loveMessage = loveSection?.querySelector(".post-love-message");
+    const postId = loveSection?.getAttribute("data-post-id");
+    const supabaseUrl = "https://wkayxbukwufgsjxnodte.supabase.co";
+    const supabaseKey = "sb_publishable_PQrjzqyptm2crxAJzWYKqw_Lflq97m2";
+    const browserIdKey = "epitaph-love-browser-id";
+    const likedKey = postId ? "epitaph-liked-" + postId : "";
+    const getBrowserId = () => {
+      let id = localStorage.getItem(browserIdKey);
+      if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem(browserIdKey, id);
+      }
+      return id;
+    };
+    const rpc = async (name, body) => {
+      const response = await fetch(supabaseUrl + "/rest/v1/rpc/" + name, {
+        method: "POST",
+        headers: { "apikey": supabaseKey, "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if (!response.ok) throw new Error("Like service unavailable");
+      return response.json();
+    };
+    const renderLove = (count, liked) => {
+      if (loveLabel) loveLabel.textContent = count + (count === 1 ? " person loves this" : " people love this");
+      if (loveButton) {
+        loveButton.disabled = liked;
+        loveButton.setAttribute("aria-pressed", String(liked));
+        loveButton.classList.toggle("is-loved", liked);
+        const heart = loveButton.querySelector(".post-love-heart");
+        if (heart) heart.textContent = liked ? "♥" : "♡";
+      }
+    };
+    if (loveSection && loveButton && loveLabel && postId) {
+      const alreadyLiked = localStorage.getItem(likedKey) === "yes";
+      try {
+        const count = await rpc("get_post_likes", { p_post_id: postId });
+        renderLove(Number(count) || 0, alreadyLiked);
+      } catch {
+        loveLabel.textContent = "♡ Show this story some love";
+        if (loveMessage) loveMessage.textContent = "Likes are temporarily unavailable.";
+        loveButton.disabled = true;
+      }
+      loveButton.addEventListener("click", async () => {
+        if (localStorage.getItem(likedKey) === "yes") return;
+        loveButton.disabled = true;
+        loveLabel.textContent = "Saving your love…";
+        try {
+          const count = await rpc("like_post", { p_post_id: postId, p_browser_id: getBrowserId() });
+          localStorage.setItem(likedKey, "yes");
+          renderLove(Number(count) || 0, true);
+          if (loveMessage) loveMessage.textContent = "Thank you for showing this story some love.";
+        } catch {
+          renderLove(0, false);
+          if (loveMessage) loveMessage.textContent = "Could not save your like. Please try again.";
+        }
+      });
+    }
+  </script>
+
   <style>
+    .post-love{margin:28px 0 18px;padding:20px 0;border-top:1px solid var(--border,#ddd);border-bottom:1px solid var(--border,#ddd)}
+    .post-love-button{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--primary);border-radius:999px;padding:11px 17px;background:transparent;color:var(--primary);font:inherit;font-weight:700;cursor:pointer;transition:background .2s,color .2s,transform .2s}
+    .post-love-button:hover:not(:disabled){transform:translateY(-1px);background:var(--primary);color:white}
+    .post-love-button:disabled{cursor:default;opacity:.82}
+    .post-love-button.is-loved{background:var(--primary);color:white}
+    .post-love-heart{font-size:1.25rem;line-height:1}
+    .post-love-message{margin:8px 0 0;color:var(--muted,#666);font-size:.85rem}
     .post-view-count{margin:7px 0 0;color:var(--primary);font-size:.82rem;font-weight:700}
   </style>
+
 </BaseLayout>
