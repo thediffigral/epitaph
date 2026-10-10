@@ -78,9 +78,9 @@ const canonical = getPostPath(post);
 
   <script>
     const loveSection = document.querySelector(".post-love");
-    const loveButton = loveSection?.querySelector(".post-love-button");
-    const loveLabel = loveSection?.querySelector(".post-love-label");
-    const loveMessage = loveSection?.querySelector(".post-love-message");
+    const loveButton = loveSection?.querySelector<HTMLButtonElement>(".post-love-button");
+    const loveLabel = loveSection?.querySelector<HTMLSpanElement>(".post-love-label");
+    const loveMessage = loveSection?.querySelector<HTMLParagraphElement>(".post-love-message");
     const postId = loveSection?.getAttribute("data-post-id");
     const supabaseUrl = "https://wkayxbukwufgsjxnodte.supabase.co";
     const supabaseKey = "sb_publishable_PQrjzqyptm2crxAJzWYKqw_Lflq97m2";
@@ -94,7 +94,7 @@ const canonical = getPostPath(post);
       }
       return id;
     };
-    const rpc = async (name, body) => {
+    const rpc = async (name: string, body: Record<string, string>): Promise<unknown> => {
       const response = await fetch(supabaseUrl + "/rest/v1/rpc/" + name, {
         method: "POST",
         headers: { "apikey": supabaseKey, "Content-Type": "application/json" },
@@ -103,7 +103,7 @@ const canonical = getPostPath(post);
       if (!response.ok) throw new Error("Like service unavailable");
       return response.json();
     };
-    const renderLove = (count, liked) => {
+    const renderLove = (count: number, liked: boolean) => {
       if (loveLabel) loveLabel.textContent = count + (count === 1 ? " person loves this" : " people love this");
       if (loveButton) {
         loveButton.disabled = liked;
