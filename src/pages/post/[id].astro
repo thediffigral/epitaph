@@ -43,6 +43,16 @@ const canonical = getPostPath(post);
     </section>
       </div>
     </div>
+    <section class="post-comments" data-post-id={post.id} aria-labelledby="comments-title">
+  <div class="comments-heading"><p class="eyebrow">THE CONVERSATION</p><h2 id="comments-title">Leave a thought</h2><p>Comments are reviewed before they appear publicly.</p></div>
+  <form class="comment-form">
+    <label for="comment-name">Name</label><input id="comment-name" name="name" type="text" maxlength="80" autocomplete="name" required placeholder="Your name" />
+    <label for="comment-body">Your comment</label><textarea id="comment-body" name="body" maxlength="3000" rows="5" required placeholder="Write your thoughts…"></textarea>
+    <label class="comment-honeypot" aria-hidden="true">Leave this field empty<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
+    <button class="comment-submit" type="submit">Submit for review ↗</button><p class="comment-status" aria-live="polite"></p>
+  </form>
+  <div class="comment-list" aria-live="polite"><h3>Reader comments <span class="comment-count"></span></h3><p class="comment-loading">Loading comments…</p></div>
+</section>
     <section class="container author-note post-author-note">
       <div>
         <p class="eyebrow">এপিটাফ · Epitaph</p>
@@ -145,4 +155,54 @@ const canonical = getPostPath(post);
     .post-view-count{margin:7px 0 0;color:var(--primary);font-size:.82rem;font-weight:700}
   </style>
 
+<script>
+const commentsRoot = document.querySelector(".post-comments");
+if (commentsRoot) {
+  const postId = commentsRoot.getAttribute("data-post-id");
+  const form = commentsRoot.querySelector("form");
+  const status = commentsRoot.querySelector(".comment-status");
+  const list = commentsRoot.querySelector(".comment-list");
+  const count = commentsRoot.querySelector(".comment-count");
+  const submitButton = commentsRoot.querySelector<HTMLButtonElement>(".comment-submit");
+  const supabaseUrl = "https://wkayxbukwufgsjxnodte.supabase.co";
+  const supabaseKey = "sb_publishable_PQrjzqyptm2crxAJzWYKqw_Lflq97m2";
+  const rpc = async (name: string, body: Record<string, string>) => {
+    const response = await fetch(supabaseUrl + "/rest/v1/rpc/" + name, { method:"POST", headers:{apikey:supabaseKey,"Content-Type":"application/json"}, body:JSON.stringify(body) });
+    if (!response.ok) throw new Error("Comment service unavailable");
+    return response.json();
+  };
+  const loadComments = async () => {
+    if (!postId || !list) return;
+    try {
+      const data = await rpc("get_approved_comments", {p_post_id:postId}) as Array<{id:number;display_name:string;body:string;created_at:string}>;
+      list.querySelector(".comment-loading")?.remove();
+      list.querySelectorAll(".comment-entry, .comment-empty").forEach(node=>node.remove());
+      if (count) count.textContent = String(data.length);
+      if (!data.length) { const empty=document.createElement("p"); empty.className="comment-empty"; empty.textContent="No comments yet. You can start the conversation."; list.append(empty); }
+      data.forEach(item=>{const entry=document.createElement("article");entry.className="comment-entry";const author=document.createElement("h4");author.textContent=item.display_name;const date=document.createElement("p");date.className="comment-date";date.textContent=new Date(item.created_at).toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});const body=document.createElement("p");body.className="comment-text";body.textContent=item.body;entry.append(author,date,body);list.append(entry);});
+    } catch {const loading=list.querySelector(".comment-loading");if(loading)loading.textContent="Comments are temporarily unavailable.";}
+  };
+  loadComments();
+  form?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if (!(form instanceof HTMLFormElement)||!postId||!submitButton||!status) return;
+    const fields=new FormData(form);const name=String(fields.get("name")??"").trim();const body=String(fields.get("body")??"").trim();
+    if(String(fields.get("website")??"").trim())return;
+    submitButton.disabled=true;status.textContent="Submitting your comment…";
+    try {await rpc("submit_post_comment",{p_post_id:postId,p_display_name:name,p_body:body});form.reset();status.textContent="Thank you. Your comment has been submitted for approval.";}
+    catch {status.textContent="Sorry, we couldn’t submit that comment. Please try again later.";}
+    finally {submitButton.disabled=false;}
+  });
+}
+</script>
+<style>
+.post-comments{margin:44px 0 36px;padding:28px 0;border-top:1px solid var(--border,#ddd)}
+.comments-heading h2{margin:0 0 8px;font-size:clamp(1.6rem,3vw,2.1rem)}.comments-heading>p:last-child{color:var(--muted,#666);font-size:.94rem}
+.comment-form{display:grid;gap:9px;margin:22px 0 34px;max-width:680px}.comment-form label{font-size:.9rem;font-weight:650}
+.comment-form input,.comment-form textarea{width:100%;box-sizing:border-box;border:1px solid var(--border,#ccc);border-radius:10px;padding:12px 14px;background:var(--surface,transparent);color:var(--text,inherit);font:inherit}
+.comment-form textarea{resize:vertical}.comment-submit{justify-self:start;border:0;border-radius:999px;padding:12px 18px;background:var(--primary);color:white;font:inherit;font-weight:700;cursor:pointer}.comment-submit:disabled{opacity:.65;cursor:wait}
+.comment-status,.comment-date{font-size:.84rem;color:var(--muted,#666)}.comment-list h3{font-size:1.05rem;margin-bottom:16px}.comment-entry{padding:17px 0;border-top:1px solid var(--border,#ddd)}
+.comment-entry h4{margin:0;font-size:1rem}.comment-entry .comment-date{margin:4px 0 9px}.comment-entry .comment-text{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.comment-honeypot{position:absolute!important;left:-10000px!important;width:1px;height:1px;overflow:hidden}
+</style>
 </BaseLayout>
